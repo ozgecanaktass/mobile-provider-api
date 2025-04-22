@@ -92,7 +92,6 @@ It simulates the backend billing system of a mobile network operator.
   → **1GB = 1024MB**
 - Remaining balance after payment is saved and can be re-paid later
 - No real credit card integration — payments are simulated
-- Data is assumed to be clean and valid
 
 ---
 
