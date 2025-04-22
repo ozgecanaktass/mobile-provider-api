@@ -106,8 +106,6 @@ It simulates the backend billing system of a mobile network operator.
 
 ## How to Test (via Swagger)
 
-> All endpoints can be tested live through the Swagger UI deployed on Render.
-
 #### Open Swagger
 - URL: [https://mobile-provider-api-vfpp.onrender.com/apidocs](https://mobile-provider-api-vfpp.onrender.com/apidocs)
 
