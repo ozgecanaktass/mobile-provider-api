@@ -54,7 +54,6 @@ It simulates the backend billing system of a mobile network operator.
 ├── .env                           # Environment variables (ignored)
 ├── main.py                        # App entry point
 ├── requirements.txt               # Dependencies
-└── render.yaml                    # Render deployment config
 ```
 
 ---
