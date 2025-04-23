@@ -4,7 +4,7 @@ This project is developed as a midterm assignment for the SE4458 - Software Arch
 It simulates the backend billing system of a mobile network operator.
 
 - Users can register, authenticate, and interact with billing operations like adding usage, calculating monthly bills, viewing detailed usage, and paying bills. The API enforces JWT-based authentication on protected endpoints and is hosted on [Render](https://render.com) with a PostgreSQL database.
-- Versioning, paging, and JWT-based authentication implemented as per course requirements.
+- Versioning, paging, and JWT-based authentication implemented as per project requirements.
 
 ---
 
