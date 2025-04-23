@@ -176,10 +176,13 @@ gunicorn main:app
 
 ## 🎥 Demo Video
 
-> 
+> https://drive.google.com/drive/folders/1TQag1qZOeIb8xrwzanTGRshjlWI1PP1_?usp=drive_link
 
 ---
 
 
-👨‍💻 Developed by **Özgecan Aktaş** for SE4458 Midterm Project - Spring 2025
+👨‍💻 Developed by **Özgecan Aktaş - 21070001019** for SE4458 Midterm Project - Spring 2025
+
+---
+
 Instructor: *[Barış Ceyhan]*
