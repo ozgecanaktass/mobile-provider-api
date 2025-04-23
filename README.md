@@ -48,10 +48,9 @@ It simulates the backend billing system of a mobile network operator.
 │   │   ├── billing_service.py
 │   │   └── usage_service.py
 │   └── extensions.py              # Flask extension bindings (DB, JWT, etc.)
-├── instance/
-│   └── (ignored)                  # Optional Flask instance folder
-├── venv/                          # Virtual environment (ignored)
-├── .env                           # Environment variables (ignored)
+├── instance                
+├── venv/                          
+├── .env                          
 ├── main.py                        # App entry point
 ├── requirements.txt               # Dependencies
 ```
