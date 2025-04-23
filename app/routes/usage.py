@@ -21,12 +21,7 @@ usage_bp = Blueprint("usage", __name__)
                 'type': 'object',
                 'properties': {
                     'month': {'type': 'string'},
-                    'type': {'type': 'string', 'enum': ['phone', 'internet']},
-                    'amount': {
-                        'type': 'integer',
-                        'default': 1,
-                        'description': 'Amount (1 = 10 min phone OR 1 MB internet)'
-                    }
+                    'type': {'type': 'string', 'enum': ['phone', 'internet']}
                 },
                 'required': ['month', 'type']
             }

@@ -10,17 +10,16 @@ def add_usage_service(data, subscriber_no):
     """adds a new usage entry for the current user"""
     month = data.get("month")
     usage_type = data.get("type")
-    amount = data.get("amount", 1)  # default amount = 1
 
     if usage_type not in ["phone", "internet"]:
         return jsonify({"error": "Invalid usage type"}), 400
 
-    # create new usage entry with specified or default amount
+    # create new usage entry with default amount = 1
     usage = Usage(
         subscriber_no=subscriber_no,
         month=month,
         type=usage_type,
-        amount=amount
+        amount=1
     )
     db.session.add(usage)
     db.session.commit()
