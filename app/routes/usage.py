@@ -21,7 +21,12 @@ usage_bp = Blueprint("usage", __name__)
                 'type': 'object',
                 'properties': {
                     'month': {'type': 'string'},
-                    'type': {'type': 'string', 'enum': ['phone', 'internet']}
+                    'type': {'type': 'string', 'enum': ['phone', 'internet']},
+                    'amount': {
+                        'type': 'integer',
+                        'default': 1,
+                        'description': 'Amount (1 = 10 min phone OR 1 MB internet)'
+                    }
                 },
                 'required': ['month', 'type']
             }
@@ -47,9 +52,9 @@ usage_bp = Blueprint("usage", __name__)
     }
 })
 def add_usage():
-    data = request.get_json() # get usage data from request body	
-    subscriber_no = get_jwt_identity() # get user identity from JWT	
-    return add_usage_service(data, subscriber_no) # add usage record for the current user
+    data = request.get_json()  # get usage data from request body	
+    subscriber_no = get_jwt_identity()  # get user identity from JWT
+    return add_usage_service(data, subscriber_no)  # add usage record for the current user
 
 @usage_bp.route("", methods=["GET"])
 @jwt_required()
@@ -74,5 +79,5 @@ def add_usage():
     }
 })
 def list_usage():
-    subscriber_no = get_jwt_identity() # get user identity from JWT	
-    return list_usage_service(subscriber_no) # list all usage records for the current user
+    subscriber_no = get_jwt_identity()  # get user identity from JWT	
+    return list_usage_service(subscriber_no)  # list all usage records for the current user
