@@ -1,42 +1,36 @@
-# app/services/intent_service.py
-import openai
 import os
+import openai
 from dotenv import load_dotenv
 
 load_dotenv()
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def parse_intent(message):
+def parse_intent(user_message):
     """
-    Given a user message, returns a dict with intent and parameters
-    Example output:
-    {
-        "intent": "get_bill",
-        "subscriber_no": "12345",
-        "month": "2025-03"
-    }
+    Calls OpenAI's Chat API to determine intent and extract parameters
     """
-    system_prompt = """
-    You are an assistant for a mobile billing system. 
-    Extract the user's intent and any required parameters from their message.
-    Respond in this format:
-    intent=<intent_name>; subscriber_no=<subscriber_no>; month=<YYYY-MM>
-    Example: intent=get_bill; subscriber_no=12345; month=2025-03
-    """
-
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": message}
+            {
+                "role": "system",
+                "content": "You are an assistant that extracts the user's intent and billing parameters from natural language."
+            },
+            {
+                "role": "user",
+                "content": f"{user_message}"
+            }
         ]
     )
 
-    content = response["choices"][0]["message"]["content"]
-    parsed = {}
-    for part in content.split(";"):
-        if "=" in part:
-            key, value = part.strip().split("=")
-            parsed[key.strip()] = value.strip()
+    content = response.choices[0].message.content
 
-    return parsed
+    # Expected format in the response: JSON string
+    # Example: {"intent": "get_bill", "subscriber_no": "12345", "month": "2025-03"}
+    try:
+        import json
+        parsed = json.loads(content)
+        return parsed
+    except Exception as e:
+        return {"error": "Failed to parse intent JSON", "raw_response": content, "exception": str(e)}
