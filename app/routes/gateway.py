@@ -4,10 +4,8 @@ from flasgger import swag_from
 from app.services.intent_service import parse_intent
 import requests
 
-import os
-
 GATEWAY_API_BASE = os.getenv("API_BASE_URL", "https://mobile-provider-api-vfpp.onrender.com/api/v1")
-
+TEST_JWT = os.getenv("TEST_JWT")  
 
 gateway_bp = Blueprint("gateway", __name__)
 
@@ -63,11 +61,16 @@ def chat():
     if not intent or not subscriber_no or not month:
         return jsonify({"error": "Missing parsed fields from intent data"}), 400
 
+    # Header'a JWT ekle
+    headers = {
+        "Authorization": f"Bearer {TEST_JWT}"
+    }
+
     if intent == "get_bill":
         resp = requests.get(f"{GATEWAY_API_BASE}/pay-bill/bill", params={
             "subscriber_no": subscriber_no,
             "month": month
-        })
+        }, headers=headers)
         return jsonify(resp.json()), resp.status_code
 
     elif intent == "get_bill_details":
@@ -76,14 +79,14 @@ def chat():
             "month": month,
             "page": 1,
             "page_size": 10
-        })
+        }, headers=headers)
         return jsonify(resp.json()), resp.status_code
 
     elif intent == "pay_bill":
         resp = requests.post(f"{GATEWAY_API_BASE}/pay-bill", json={
             "subscriber_no": subscriber_no,
             "month": month
-        })
+        }, headers=headers)
         return jsonify(resp.json()), resp.status_code
 
     return jsonify({"error": f"Unhandled intent: {intent}"}), 400
