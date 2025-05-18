@@ -11,18 +11,24 @@ def parse_intent(user_message):
     Calls OpenAI's Chat API to determine intent and extract parameters
     """
     response = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an assistant that extracts the user's intent and billing parameters from natural language."
-            },
-            {
-                "role": "user",
-                "content": f"{user_message}"
-            }
-        ]
-    )
+    model="gpt-3.5-turbo",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an AI that extracts structured intent and billing data from user messages. "
+                "You MUST respond ONLY with a JSON object containing: "
+                "{intent: string, subscriber_no: string, month: YYYY-MM}. "
+                "Do NOT include any explanation or extra text. Respond with pure JSON only."
+            )
+        },
+        {
+            "role": "user",
+            "content": f"{user_message}"
+        }
+    ]
+)
+
 
     content = response.choices[0].message.content
 
