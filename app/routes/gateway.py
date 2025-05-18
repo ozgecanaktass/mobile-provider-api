@@ -4,7 +4,10 @@ from flasgger import swag_from
 from app.services.intent_service import parse_intent
 import requests
 
-GATEWAY_API_BASE = os.getenv("API_BASE_URL", "http://localhost:5000/api/v1")
+import os
+
+GATEWAY_API_BASE = os.getenv("API_BASE_URL", "https://mobile-provider-api-vfpp.onrender.com/api/v1")
+
 
 gateway_bp = Blueprint("gateway", __name__)
 
