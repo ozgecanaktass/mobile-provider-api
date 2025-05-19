@@ -13,6 +13,7 @@ def parse_intent(user_message):
     - get_bill
     - get_bill_details
     - pay_bill
+    Always returns the month as YYYY-MM (e.g., 2025-03).
     """
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -20,12 +21,14 @@ def parse_intent(user_message):
             {
                 "role": "system",
                 "content": (
-                    "You are an assistant that extracts billing-related intent from user queries.\n"
-                    "You must respond ONLY with a JSON object in the following exact format:\n"
+                    "You are an assistant that extracts billing-related intent and parameters from user queries.\n"
+                    "You MUST respond ONLY with a JSON object in the following exact format:\n"
                     "{\"intent\": one of [\"get_bill\", \"get_bill_details\", \"pay_bill\"], "
                     "\"subscriber_no\": string, \"month\": YYYY-MM}.\n"
+                    "The month parameter MUST always be output as 'YYYY-MM' (e.g., 2025-03). "
+                    "If the user says a month like 'March 2025', convert it to '2025-03'. "
                     "If the message is ambiguous or irrelevant, choose \"intent\": \"get_bill\" by default.\n"
-                    "Respond with JSON only. Do not include any explanation, notes, or text."
+                    "Respond with pure JSON only. Do not include any explanation, notes, or text."
                 )
             },
             {
