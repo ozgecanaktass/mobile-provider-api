@@ -48,4 +48,4 @@ app.register_blueprint(billing_bp, url_prefix="/api/v1/pay-bill")
 app.register_blueprint(gateway_bp, url_prefix="/api/v1/gateway")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)), debug=True)
