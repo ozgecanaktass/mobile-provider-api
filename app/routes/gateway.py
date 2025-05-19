@@ -2,11 +2,11 @@ import os
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 from app.services.intent_service import parse_intent
-import requests
-import traceback
-
-GATEWAY_API_BASE = os.getenv("API_BASE_URL", "https://mobile-provider-api-vfpp.onrender.com/api/v1")
-TEST_JWT = os.getenv("TEST_JWT") 
+from app.services.billing_service import (
+    calculate_bill_service,
+    pay_bill_service,
+    get_bill_details_service,
+)
 
 gateway_bp = Blueprint("gateway", __name__)
 
@@ -44,25 +44,17 @@ gateway_bp = Blueprint("gateway", __name__)
     }
 })
 def chat():
-    print("GATEWAY: Yeni istek geldi!")
     data = request.get_json()
-    print("GATEWAY: Gelen veri:", data)
-
     user_message = data.get("message")
 
     if not user_message:
-        print("GATEWAY ERROR: message parametresi eksik.")
         return jsonify({"error": "Missing 'message' in request"}), 400
 
     try:
         intent_data = parse_intent(user_message)
-        print("GATEWAY: Intent parse sonucu:", intent_data)
         if "error" in intent_data:
-            print("GATEWAY ERROR: Intent parse hatası:", intent_data)
             return jsonify({"error": "Intent parsing failed", "details": intent_data}), 500
     except Exception as e:
-        print("GATEWAY EXCEPTION (parse_intent):")
-        print(traceback.format_exc())
         return jsonify({"error": "Intent parsing failed", "details": str(e)}), 500
 
     intent = intent_data.get("intent")
@@ -70,62 +62,21 @@ def chat():
     month = intent_data.get("month")
 
     if not intent or not subscriber_no or not month:
-        print("GATEWAY ERROR: Parsed fields eksik.", intent, subscriber_no, month)
         return jsonify({"error": "Missing parsed fields from intent data"}), 400
 
-    # JWT token header
-    headers = {
-        "Authorization": f"Bearer {TEST_JWT}"
-    }
-    print(f"GATEWAY: Yönlendirilecek intent: {intent}")
+    if intent == "get_bill":
+        # calculate_bill_service 'data' ve 'subscriber_no' bekliyor
+        resp, status = calculate_bill_service({"month": month}, subscriber_no)
+        return resp, status
 
-    try:
-        if intent == "get_bill":
-            print("GATEWAY: get_bill çağrılıyor.")
-            resp = requests.get(
-                f"{GATEWAY_API_BASE}/pay-bill/bill",
-                params={
-                    "subscriber_no": subscriber_no,
-                    "month": month
-                },
-                headers=headers
-            )
-            print("GATEWAY: get_bill API cevabı:", resp.status_code, resp.text)
-            return jsonify(resp.json()), resp.status_code
+    elif intent == "get_bill_details":
+        page = 1
+        page_size = 10
+        resp, status = get_bill_details_service(subscriber_no, month, page, page_size)
+        return resp, status
 
-        elif intent == "get_bill_details":
-            print("GATEWAY: get_bill_details çağrılıyor.")
-            resp = requests.get(
-                f"{GATEWAY_API_BASE}/pay-bill/bill/details",
-                params={
-                    "subscriber_no": subscriber_no,
-                    "month": month,
-                    "page": 1,
-                    "page_size": 10
-                },
-                headers=headers
-            )
-            print("GATEWAY: get_bill_details API cevabı:", resp.status_code, resp.text)
-            return jsonify(resp.json()), resp.status_code
+    elif intent == "pay_bill":
+        resp, status = pay_bill_service({"subscriber_no": subscriber_no, "month": month})
+        return resp, status
 
-        elif intent == "pay_bill":
-            print("GATEWAY: pay_bill çağrılıyor.")
-            resp = requests.post(
-                f"{GATEWAY_API_BASE}/pay-bill",
-                json={
-                    "subscriber_no": subscriber_no,
-                    "month": month
-                },
-                headers=headers
-            )
-            print("GATEWAY: pay_bill API cevabı:", resp.status_code, resp.text)
-            return jsonify(resp.json()), resp.status_code
-
-        else:
-            print(f"GATEWAY ERROR: Bilinmeyen intent: {intent}")
-            return jsonify({"error": f"Unhandled intent: {intent}"}), 400
-
-    except Exception as e:
-        print("GATEWAY EXCEPTION (API çağrısı):")
-        print(traceback.format_exc())
-        return jsonify({"error": "Internal server error", "details": str(e)}), 500
+    return jsonify({"error": f"Unhandled intent: {intent}"}), 400
