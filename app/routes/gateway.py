@@ -2,8 +2,8 @@ import os
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
 from app.services.intent_service import parse_intent
+from app.services.bill_service import calculate_bill_service
 from app.services.billing_service import (
-    calculate_bill_service,
     pay_bill_service,
     get_bill_details_service,
 )
