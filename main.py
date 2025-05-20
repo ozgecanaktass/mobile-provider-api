@@ -7,7 +7,6 @@ from app.routes.usage import usage_bp
 from app.routes.auth import auth_bp
 from app.routes.calculate_bill import bill_bp
 from app.routes.billing import billing_bp
-from app.routes.gateway import gateway_bp
 
 load_dotenv()
 
